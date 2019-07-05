@@ -1,5 +1,7 @@
 package com.adyun.serialport;
 
+import android.util.Log;
+
 import androidx.core.app.NavUtils;
 
 import java.io.File;
@@ -18,6 +20,7 @@ import java.util.concurrent.LinkedBlockingDeque;
  * on 2019/7/4.
  */
 public class SerialPortManager {
+    private static final String TAG = "SerialPortManager";
     private FileInputStream mFileInputStream;
     private FileOutputStream mFileOutputStream;
 
@@ -84,6 +87,7 @@ public class SerialPortManager {
                     case 1:
                         break;
                 }
+                Log.e(TAG, "onDataReceive: "+byteToHex(readBytes));
                 update(readBytes);
 
             }
@@ -92,6 +96,17 @@ public class SerialPortManager {
 
     }
 
+    private String byteToHex(byte[] bytes) {
+        StringBuffer sb = new StringBuffer();
+        for (int i = 0; i < bytes.length; i++) {
+            String hex = Integer.toHexString(bytes[i] & 0xFF);
+            if (hex.length() < 2){
+                sb.append(0);
+            }
+            sb.append(hex);
+        }
+        return sb.toString();
+    }
 
 
     public native FileDescriptor open(String path, int baudRate) ;
